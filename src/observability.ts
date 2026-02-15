@@ -3,7 +3,7 @@
  * All step/done/ideation updates are broadcast to WS and logged (terminal-first).
  */
 
-import type { StepUpdate, ImplementationDone, IdeationIdea } from "./types.ts";
+import type { StepUpdate, ImplementationDone, IdeationIdea, JobEvent } from "./types.ts";
 import { log } from "./logger.ts";
 import type { BufferSource } from "bun";
 
@@ -14,12 +14,8 @@ export type WsMessage =
   | { type: "done"; payload: ImplementationDone }
   | { type: "deployment"; jobId: string; url: string }
   | { type: "all_done"; results: { url: string; pitch: string }[] }
-  | {
-    type: "log"; payload: {
-      jobId: string;
-      log: string;
-    }
-  };
+  | { type: "log"; payload: { jobId: string; log: string } }
+  | JobEvent;
 
 type WsLike = { send(data: string | BufferSource): number | void };
 

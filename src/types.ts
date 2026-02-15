@@ -47,6 +47,34 @@ export interface StepUpdate {
   message?: string;
 }
 
+/** Unified job event: wrapper { type, payload } for all implementation → orchestrator events */
+export type JobEvent =
+  | { type: "JOB_IMPL_STARTED"; payload: JobImplStartedPayload }
+  | { type: "JOB_LOG"; payload: JobLogPayload };
+
+/** Sent once when the sandbox starts; includes plan and context for the end user */
+export interface JobImplStartedPayload {
+  jobId: string;
+  idea: string;
+  temperature: number;
+  risk: number;
+  /** Total steps the AI planned (from initial numbered plan) */
+  totalSteps?: number;
+  /** Plan summary or first lines for display */
+  planInsight?: string;
+}
+
+/** Per-step log line; summary is user-friendly, message is full text */
+export interface JobLogPayload {
+  jobId: string;
+  stepIndex: number;
+  done: boolean;
+  /** Full message from the agent */
+  message: string;
+  /** Short line for display (e.g. "Step 3: Create Next.js structure") */
+  summary: string;
+}
+
 /** Done payload from implementation module */
 export interface ImplementationDone {
   jobId: string;

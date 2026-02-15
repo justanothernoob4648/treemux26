@@ -11,9 +11,10 @@ from fastapi import Request, Response
 
 app = modal.App("epoch-implementation")
 
-# Inlined runner: reads env, runs Claude Agent, commit+push after every step, log to stdout + webhook.
+# Inlined runner: JOB_IMPL_STARTED (with plan) + JOB_LOG (step with summary), commit+push per step.
 _RUN_IMPL_SOURCE = r'''
 import os
+import re
 import subprocess
 import json
 import urllib.request
@@ -21,6 +22,15 @@ from pathlib import Path
 
 def _env(key, default=""):
     return (os.environ.get(key) or default).strip()
+
+def _summary_for_display(message):
+    s = message.strip()
+    for prefix in ("Good! ", "Great! ", "Okay, ", "Okay ", "Now let me ", "Let me "):
+        if s.startswith(prefix):
+            s = s[len(prefix):].strip()
+            break
+    s = s.strip(".:")
+    return (s[:80] + ("..." if len(s) > 80 else "")) if s else message[:80]
 
 def main():
     job_id = _env("JOB_ID")
@@ -51,12 +61,14 @@ def main():
             push_url = None
     def _log(msg):
         print("[implementation]", msg, flush=True)
-        if base:
-            try:
-                req = urllib.request.Request(base + "/api/internal/log", data=json.dumps({"jobId": job_id, "log": msg}).encode(), headers={"Content-Type": "application/json"}, method="POST")
-                urllib.request.urlopen(req, timeout=5)
-            except Exception:
-                pass
+    def post_event(evt_type, payload):
+        if not base:
+            return
+        try:
+            req = urllib.request.Request(base + "/internal/job-event", data=json.dumps({"type": evt_type, "payload": payload}).encode(), headers={"Content-Type": "application/json"}, method="POST")
+            urllib.request.urlopen(req, timeout=10)
+        except Exception as e:
+            _log("job-event error: %s" % e)
     def commit_and_push(step_index, step_msg):
         if not push_url:
             return
@@ -68,25 +80,40 @@ def main():
         except subprocess.CalledProcessError as e:
             _log("git push step %s failed: %s" % (step_index, e))
     _log("run_impl started job_id=%s branch=%s" % (job_id, branch))
-    def post_step(step, step_index, done):
-        if base:
-            try:
-                req = urllib.request.Request(base + "/api/internal/step", data=json.dumps({"jobId": job_id, "step": step, "stepIndex": step_index, "done": done, "message": step}).encode(), headers={"Content-Type": "application/json"}, method="POST")
-                urllib.request.urlopen(req, timeout=10)
-            except Exception as e:
-                _log("step callback error: %s" % e)
-        commit_and_push(step_index, step)
+    started_sent = [False]
+    def post_step(message, step_index, done):
+        summary = _summary_for_display(message)
+        post_event("JOB_LOG", {"jobId": job_id, "stepIndex": step_index, "done": done, "message": message, "summary": summary})
+        commit_and_push(step_index, message)
     import anyio
     from claude_agent_sdk import ClaudeAgentOptions, query, AssistantMessage, TextBlock, ResultMessage
-    system_prompt = "You are an expert developer. Implement this as a Next.js app in the current directory. First output a short numbered plan (3-6 steps), then execute each step. Use only Read, Write, Edit, Bash, Glob. Create app with: npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --use-npm. Idea: %s. Worker profile: %s. Risk: %s, Temperature: %s. Keep minimal but functional." % (idea, worker_profile, risk, temperature)
-    prompt = "Implement this idea as a Next.js app in the current directory: %s\n\nFirst output your numbered plan, then execute each step." % idea
+    system_prompt = "You are an expert developer. Implement this as a Next.js app in the current directory. First output a short numbered plan (exactly one line per step, e.g. 1. Step one 2. Step two), then execute each step. Use only Read, Write, Edit, Bash, Glob. Create app with: npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --use-npm. Idea: %s. Worker profile: %s. Risk: %s, Temperature: %s. Keep minimal but functional. For each step, start with a single short line describing the step (e.g. 'Creating app scaffold' or 'Adding homepage'), then do the work." % (idea, worker_profile, risk, temperature)
+    prompt = "Implement this idea as a Next.js app in the current directory: %s\n\nFirst output your numbered plan (one line per step), then execute each step." % idea
     step_index = [0]
     async def run_agent():
         async for message in query(prompt=prompt, options=ClaudeAgentOptions(system_prompt=system_prompt, allowed_tools=["Read", "Write", "Edit", "Bash", "Glob"], permission_mode="acceptEdits")):
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     if isinstance(block, TextBlock) and block.text.strip():
-                        post_step(block.text.strip()[:200], step_index[0], False)
+                        text = block.text.strip()
+                        if not started_sent[0]:
+                            started_sent[0] = True
+                            lines = [l.strip() for l in text.split("\n") if l.strip()]
+                            num_steps = 0
+                            plan_lines = []
+                            for l in lines:
+                                m = re.match(r"^(\d+)\.\s*(.+)", l)
+                                if m:
+                                    num_steps += 1
+                                    plan_lines.append(m.group(2).strip())
+                                elif num_steps > 0:
+                                    break
+                            if num_steps == 0:
+                                num_steps = min(6, max(1, len(lines)))
+                                plan_lines = lines[:num_steps]
+                            plan_insight = "\n".join(plan_lines[:10]) if plan_lines else text[:500]
+                            post_event("JOB_IMPL_STARTED", {"jobId": job_id, "idea": idea, "temperature": temperature, "risk": risk, "totalSteps": num_steps or None, "planInsight": plan_insight})
+                        post_step(text[:500], step_index[0], False)
                         step_index[0] += 1
             elif isinstance(message, ResultMessage):
                 post_step("Agent run complete", step_index[0], True)
@@ -95,7 +122,7 @@ def main():
     pitch = "Built with Epoch: %s..." % idea[:120]
     if base:
         try:
-            req = urllib.request.Request(base + "/api/internal/done", data=json.dumps({"jobId": job_id, "repoUrl": repo_url or "", "pitch": pitch, "success": bool(repo_url or not github_token), "error": None, "branch": branch}).encode(), headers={"Content-Type": "application/json"}, method="POST")
+            req = urllib.request.Request(base + "/internal/done", data=json.dumps({"jobId": job_id, "repoUrl": repo_url or "", "pitch": pitch, "success": bool(repo_url or not github_token), "error": None, "branch": branch}).encode(), headers={"Content-Type": "application/json"}, method="POST")
             urllib.request.urlopen(req, timeout=15)
         except Exception as e:
             _log("done callback error: %s" % e)
