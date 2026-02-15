@@ -6,7 +6,7 @@ Treemux takes a single problem statement and spawns N parallel AI workers — ea
 
 > Task → N × AI Workers (Modal + Claude Code) → GitHub → Vercel → Live Demos
 
-This has tremendous potential. Imagine a founder simulating a batch of 100 YC companies in 3 hours for  $10 worth of Claude credits and having a deep research judge pick the best *implemented* idea?g
+This has tremendous potential. Imagine a founder simulating a batch of 100 YC companies in 3 hours for $10 worth of Claude credits and having a deep research judge pick the best *implemented* idea. 
 
 ---
 
