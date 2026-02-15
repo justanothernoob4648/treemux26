@@ -285,14 +285,14 @@ def run_in_sandbox(
         "OPENROUTER_API_KEY": openrouter_api_key or "",
     })
 
-    _log("creating Sandbox job_id=%s branch=%s" % (job_id, branch))
+    _log("creating Sandbox job_id=%s branch=%s model=%s" % (job_id, branch, model or "default"))
 
     sb = modal.Sandbox.create(
         app=app,
         image=_sandbox_image,
         secrets=[job_secret],
         workdir="/workspace",
-        timeout=1800,
+        timeout=7200,
     )
 
     done_called = False
