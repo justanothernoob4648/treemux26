@@ -275,7 +275,7 @@ Each command sends an HTTP callback to the orchestrator, which forwards it to th
 5. Scores are normalized, composites computed, outliers detected
 6. Rankings + summary streamed back → API → frontend sidebar
 
----
+--- 
 
 ## License
 
