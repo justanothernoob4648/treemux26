@@ -109,6 +109,9 @@ export async function runTask(
       gitUserEmail: process.env.GIT_USER_EMAIL,
       claudeOauthToken: process.env.CLAUDE_CODE_OAUTH_TOKEN,
       model: input.model,
+      anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+      openaiApiKey: process.env.OPENAI_API_KEY,
+      openrouterApiKey: process.env.OPENROUTER_API_KEY,
     });
   }
 

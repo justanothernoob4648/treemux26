@@ -78,7 +78,8 @@ treemux-report done
 ## Verification (CRITICAL - do this before calling treemux-report done)
 
 - **Clean install test**: Run `rm -rf node_modules && bun install && bun run build` to verify ALL dependencies are declared in package.json. If this fails, add the missing packages with `bun add <package>` and re-test. shadcn/ui often requires: `clsx`, `tailwind-merge`, `class-variance-authority`, `tw-animate-css`, `radix-ui`.
-- Verify `bun dev` starts the dev server without errors (start it briefly to confirm, then kill it)
+- Verify `bun dev` starts the dev server without errors
+- If possible, interact with the server APIs and do tests to verify actual functionality. Ensure correctness of communication between frontend and backend.
 - Test that the core functionality works end-to-end
 - Write PITCH.md with a compelling pitch
 - Then call `treemux-report done`
