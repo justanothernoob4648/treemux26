@@ -115,17 +115,19 @@ def main():
     if repo_url and github_token:
         push_url = repo_url.replace("https://", "https://x-access-token:%s@" % github_token)
         try:
+            subprocess.run(["git", "init"], cwd=work_dir, check=True, capture_output=True)
             subprocess.run(["git", "config", "user.email", "epoch@epoch.local"], cwd=work_dir, check=True, capture_output=True)
             subprocess.run(["git", "config", "user.name", "Epoch"], cwd=work_dir, check=True, capture_output=True)
-            subprocess.run(["git", "init"], cwd=work_dir, check=True, capture_output=True)
             subprocess.run(["git", "branch", "-M", branch], cwd=work_dir, check=True, capture_output=True)
             subprocess.run(["git", "remote", "add", "origin", push_url], cwd=work_dir, check=True, capture_output=True)
+            subprocess.run(["git", "pull", "origin", branch], cwd=work_dir, check=True, capture_output=True)
         except subprocess.CalledProcessError as e:
             push_url = None
-            print("[worker] git init failed: %s" % e, flush=True)
+            stderr = (e.stderr or b"").decode(errors="replace").strip()
+            print("[worker] git init failed: %s stderr=%s" % (e, stderr), flush=True)
             if base:
                 try:
-                    _err = urllib.request.Request(base + "/v1.0/log/error", data=json.dumps({"jobId": job_id, "error": "git init failed: %s" % e, "phase": "git_init"}).encode(), headers={"Content-Type": "application/json"}, method="POST")
+                    _err = urllib.request.Request(base + "/v1.0/log/error", data=json.dumps({"jobId": job_id, "error": "git init failed: %s" % e, "stderr": stderr, "phase": "git_init"}).encode(), headers={"Content-Type": "application/json"}, method="POST")
                     urllib.request.urlopen(_err, timeout=10)
                 except Exception:
                     pass
@@ -148,11 +150,13 @@ def main():
         try:
             subprocess.run(["git", "add", "-A"], cwd=work_dir, check=True, capture_output=True)
             subprocess.run(["git", "commit", "-m", "Step %s: %s" % (step_index, summary[:72]), "--allow-empty"], cwd=work_dir, check=True, capture_output=True)
-            subprocess.run(["git", "push", "-u", "origin", branch], cwd=work_dir, check=True, capture_output=True, timeout=120)
+            subprocess.run(["git", "push", "--force", "-u", "origin", branch], cwd=work_dir, check=True, capture_output=True, timeout=120)
             _log("pushed step %s" % step_index)
+            _post("/v1.0/log/push", {"jobId": job_id, "stepIndex": step_index, "branch": branch, "summary": summary})
         except subprocess.CalledProcessError as e:
-            _log("git push step %s failed: %s" % (step_index, e))
-            _post("/v1.0/log/error", {"jobId": job_id, "error": "git push failed at step %s: %s" % (step_index, e), "phase": "git_push"})
+            stderr = (e.stderr or b"").decode(errors="replace").strip()
+            _log("git push step %s failed: %s stderr=%s" % (step_index, e, stderr))
+            _post("/v1.0/log/error", {"jobId": job_id, "error": "git push failed at step %s: %s" % (step_index, e), "stderr": stderr, "phase": "git_push"})
 
     _log("started job_id=%s branch=%s" % (job_id, branch))
 

@@ -49,6 +49,7 @@ export type WsEvent =
   | { type: "JOB_STEP_LOG"; payload: JobStepLogPayload }
   | { type: "JOB_DONE"; payload: JobDonePayload }
   | { type: "JOB_ERROR"; payload: JobErrorPayload }
+  | { type: "JOB_PUSH"; payload: JobPushPayload }
   | { type: "JOB_DEPLOYMENT"; payload: JobDeploymentPayload }
   | { type: "ALL_DONE"; payload: AllDonePayload };
 
@@ -97,6 +98,14 @@ export interface JobErrorPayload {
   stderr?: string;
   /** Which phase failed (e.g. "git_init", "git_push", "agent") */
   phase?: string;
+}
+
+/** Successful git push for a step */
+export interface JobPushPayload {
+  jobId: string;
+  stepIndex: number;
+  branch: string;
+  summary: string;
 }
 
 /** Vercel deployment URL available */

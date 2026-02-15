@@ -63,13 +63,13 @@ export async function createBranch(repoFullName: string, branchName: string): Pr
   }
 
   log.github("Creating branch " + branchName + " in " + repoFullName + " ...");
-  const repoRes = await fetch(`https://api.github.com/repos/${repoFullName}`, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+  const ghHeaders = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  const repoRes = await fetch(`https://api.github.com/repos/${repoFullName}`, { headers: ghHeaders });
   if (!repoRes.ok) {
     const text = await repoRes.text();
     log.error("Get repo failed: " + repoRes.status + " " + text);
@@ -78,23 +78,29 @@ export async function createBranch(repoFullName: string, branchName: string): Pr
   const repoData = (await repoRes.json()) as { default_branch?: string };
   const defaultBranch = repoData.default_branch ?? "main";
 
-  const refRes = await fetch(
-    `https://api.github.com/repos/${repoFullName}/git/refs/heads/${defaultBranch}`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
+  // auto_init is async — the initial commit may not exist yet, so retry
+  const MAX_RETRIES = 8;
+  const RETRY_DELAY_MS = 1500;
+  let sha: string | undefined;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const refRes = await fetch(
+      `https://api.github.com/repos/${repoFullName}/git/refs/heads/${defaultBranch}`,
+      { headers: ghHeaders },
+    );
+    if (refRes.ok) {
+      const refData = (await refRes.json()) as { object?: { sha?: string } };
+      sha = refData.object?.sha;
+      if (sha) break;
+    } else {
+      const text = await refRes.text();
+      log.github("Waiting for initial commit (attempt " + attempt + "/" + MAX_RETRIES + "): " + refRes.status);
+      if (attempt === MAX_RETRIES) {
+        log.error("Get ref failed after retries: " + refRes.status + " " + text);
+        throw new Error(`GitHub get ref failed: ${refRes.status}`);
+      }
     }
-  );
-  if (!refRes.ok) {
-    const text = await refRes.text();
-    log.error("Get ref failed: " + refRes.status + " " + text);
-    throw new Error(`GitHub get ref failed: ${refRes.status}`);
+    await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
   }
-  const refData = (await refRes.json()) as { object?: { sha?: string } };
-  const sha = refData.object?.sha;
   if (!sha) {
     log.error("No SHA in ref response");
     throw new Error("GitHub ref has no SHA");
@@ -102,12 +108,7 @@ export async function createBranch(repoFullName: string, branchName: string): Pr
 
   const createRefRes = await fetch(`https://api.github.com/repos/${repoFullName}/git/refs`, {
     method: "POST",
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "Content-Type": "application/json",
-    },
+    headers: { ...ghHeaders, "Content-Type": "application/json" },
     body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha }),
   });
   if (!createRefRes.ok) {

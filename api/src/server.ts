@@ -3,7 +3,7 @@
  * All inbound POST payloads use the unified { type, payload } shape (WsEvent).
  */
 
-import type { JobStartedPayload, JobStepLogPayload, JobDonePayload, JobErrorPayload, WsEvent } from "./types.ts";
+import type { JobStartedPayload, JobStepLogPayload, JobDonePayload, JobErrorPayload, JobPushPayload, WsEvent } from "./types.ts";
 import { getObservabilityHandlers } from "./observability.ts";
 import { createDeployment } from "./vercel.ts";
 import { parseRepoFullName } from "./github.ts";
@@ -75,6 +75,23 @@ export function createServer(state: ServerState) {
     });
   }
 
+  /** POST /v1.0/log/push — worker successfully pushed a step to GitHub */
+  async function handlePush(req: Request): Promise<Response> {
+    if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+    let body: JobPushPayload;
+    try {
+      body = (await req.json()) as JobPushPayload;
+    } catch {
+      log.error("/v1.0/log/push invalid JSON");
+      return new Response("Invalid JSON", { status: 400 });
+    }
+    log.server("JOB_PUSH " + body.jobId + " step=" + body.stepIndex + " branch=" + body.branch);
+    obs.broadcast({ type: "JOB_PUSH", payload: body });
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   /** POST /v1.0/log/done — worker signals completion */
   async function handleDone(req: Request): Promise<Response> {
     if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
@@ -137,6 +154,7 @@ export function createServer(state: ServerState) {
       if (u.pathname === "/v1.0/log/start") return handleStart(req);
       if (u.pathname === "/v1.0/log/step") return handleStep(req);
       if (u.pathname === "/v1.0/log/error") return handleError(req);
+      if (u.pathname === "/v1.0/log/push") return handlePush(req);
       if (u.pathname === "/v1.0/log/done") return handleDone(req);
       if (u.pathname === "/health") return new Response("ok");
       return new Response("Not found", { status: 404 });
@@ -148,6 +166,6 @@ export function createServer(state: ServerState) {
     },
   });
 
-  log.server("Listening on " + server.port + " WS /ws, POST /v1.0/log/{start,step,error,done}");
+  log.server("Listening on " + server.port + " WS /ws, POST /v1.0/log/{start,step,error,push,done}");
   return { server, obs };
 }

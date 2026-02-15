@@ -1,0 +1,357 @@
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="Epoch" version="24.0.0" type="device">
+  <diagram id="epoch-arch" name="Epoch Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════════ BACKGROUND SWIMLANES ═══════════════ -->
+
+        <!-- API / Server lane -->
+        <mxCell id="lane-api" value="api/" style="shape=swimlane;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;rounded=1;arcSize=8;swimlaneLine=1;collapsible=0;horizontal=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="30" width="740" height="540" as="geometry" />
+        </mxCell>
+
+        <!-- Worker lane -->
+        <mxCell id="lane-worker" value="worker/" style="shape=swimlane;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;rounded=1;arcSize=8;swimlaneLine=1;collapsible=0;horizontal=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="30" width="500" height="540" as="geometry" />
+        </mxCell>
+
+        <!-- External Services lane -->
+        <mxCell id="lane-ext" value="External Services" style="shape=swimlane;startSize=28;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;rounded=1;arcSize=8;swimlaneLine=1;collapsible=0;horizontal=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="610" width="1270" height="210" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ API NODES ═══════════════ -->
+
+        <!-- Orchestrator (index.ts) -->
+        <mxCell id="orch" value="&#xa;Orchestrator&#xa;index.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;fontColor=#ffffff;strokeColor=#334155;fontSize=12;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="40" y="60" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Ideation (ideation.ts) -->
+        <mxCell id="ideation" value="&#xa;Ideation&#xa;ideation.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3b82f6;fontColor=#ffffff;strokeColor=#2563eb;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="40" y="160" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Bun HTTP/WS Server (server.ts) -->
+        <mxCell id="server" value="&#xa;Bun Server&#xa;server.ts&#xa;:3000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f766e;fontColor=#ffffff;strokeColor=#115e59;fontSize=11;fontStyle=1;arcSize=12;spacingTop=2;" vertex="1" parent="lane-api">
+          <mxGeometry x="280" y="60" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Endpoints box -->
+        <mxCell id="endpoints" value="/v1.0/log/start&#xa;/v1.0/log/step&#xa;/v1.0/log/error&#xa;/v1.0/log/done&#xa;/ws&#xa;/health" style="text;html=1;align=left;verticalAlign=top;fillColor=#f0fdf4;strokeColor=#86efac;rounded=1;arcSize=10;fontSize=10;fontFamily=monospace;spacingLeft=6;spacingTop=4;spacingRight=6;spacingBottom=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="280" y="150" width="160" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Observability / WS Broadcast (observability.ts) -->
+        <mxCell id="obs" value="&#xa;WS Broadcast&#xa;observability.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7c3aed;fontColor=#ffffff;strokeColor=#6d28d9;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="500" y="60" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- GitHub module (github.ts) -->
+        <mxCell id="gh-mod" value="&#xa;GitHub API&#xa;github.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#475569;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="40" y="260" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Vercel module (vercel.ts) -->
+        <mxCell id="vc-mod" value="&#xa;Vercel SDK&#xa;vercel.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#475569;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="40" y="340" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Impl Spawn (implementation-spawn.ts) -->
+        <mxCell id="spawn" value="&#xa;Impl Spawner&#xa;implementation-spawn.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#475569;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="40" y="430" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Types box -->
+        <mxCell id="types" value="WsEvent Union&#xa;─────────────────&#xa;IDEATION_DONE&#xa;JOB_STARTED&#xa;JOB_STEP_LOG&#xa;JOB_ERROR&#xa;JOB_DONE&#xa;JOB_DEPLOYMENT&#xa;ALL_DONE" style="text;html=1;align=left;verticalAlign=top;fillColor=#fefce8;strokeColor=#fde047;rounded=1;arcSize=10;fontSize=10;fontFamily=monospace;spacingLeft=6;spacingTop=4;spacingRight=6;spacingBottom=4;fontStyle=0;" vertex="1" parent="lane-api">
+          <mxGeometry x="500" y="140" width="170" height="145" as="geometry" />
+        </mxCell>
+
+        <!-- Client -->
+        <mxCell id="client" value="&#xa;UI Client&#xa;(WebSocket)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a855f7;fontColor=#ffffff;strokeColor=#9333ea;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-api">
+          <mxGeometry x="540" y="310" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ WORKER NODES ═══════════════ -->
+
+        <!-- Modal App -->
+        <mxCell id="modal-app" value="&#xa;Modal App&#xa;epoch-implementation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ea580c;fontColor=#ffffff;strokeColor=#c2410c;fontSize=12;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-worker">
+          <mxGeometry x="40" y="50" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Trigger endpoint -->
+        <mxCell id="trigger" value="&#xa;POST /trigger&#xa;(FastAPI endpoint)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f97316;fontColor=#ffffff;strokeColor=#ea580c;fontSize=10;fontStyle=0;arcSize=12;spacingTop=4;" vertex="1" parent="lane-worker">
+          <mxGeometry x="40" y="140" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Sandbox -->
+        <mxCell id="sandbox" value="&#xa;Modal Sandbox&#xa;(Debian + Node 20 + Git)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dc2626;fontColor=#ffffff;strokeColor=#b91c1c;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;dashed=1;dashPattern=8 4;" vertex="1" parent="lane-worker">
+          <mxGeometry x="40" y="220" width="420" height="260" as="geometry" />
+        </mxCell>
+
+        <!-- Claude Agent inside sandbox -->
+        <mxCell id="claude" value="&#xa;Claude Agent SDK&#xa;(Anthropic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbbf24;fontColor=#1e293b;strokeColor=#f59e0b;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-worker">
+          <mxGeometry x="70" y="260" width="170" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Git operations inside sandbox -->
+        <mxCell id="git-ops" value="&#xa;Git Ops&#xa;init → commit → push&#xa;(per step)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbbf24;fontColor=#1e293b;strokeColor=#f59e0b;fontSize=10;fontStyle=0;arcSize=12;spacingTop=2;" vertex="1" parent="lane-worker">
+          <mxGeometry x="270" y="260" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- HTTP Callbacks inside sandbox -->
+        <mxCell id="callbacks" value="&#xa;HTTP Callbacks&#xa;urllib → /v1.0/log/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbbf24;fontColor=#1e293b;strokeColor=#f59e0b;fontSize=10;fontStyle=0;arcSize=12;spacingTop=4;" vertex="1" parent="lane-worker">
+          <mxGeometry x="70" y="340" width="170" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Template Volume -->
+        <mxCell id="vol" value="&#xa;📦 Volume&#xa;epoch-templates&#xa;/template/nextjs-base" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fef3c7;strokeColor=#f59e0b;fontSize=10;fontStyle=0;arcSize=12;spacingTop=10;" vertex="1" parent="lane-worker">
+          <mxGeometry x="270" y="340" width="160" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- /out working dir -->
+        <mxCell id="workdir" value="/out (working dir)" style="text;html=1;align=center;verticalAlign=middle;fillColor=none;strokeColor=none;fontSize=9;fontFamily=monospace;fontColor=#991b1b;" vertex="1" parent="lane-worker">
+          <mxGeometry x="70" y="420" width="170" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ EXTERNAL SERVICES ═══════════════ -->
+
+        <!-- OpenRouter -->
+        <mxCell id="openrouter" value="&#xa;OpenRouter API&#xa;(Gemma 2 9B)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#be185d;fontColor=#ffffff;strokeColor=#9d174d;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-ext">
+          <mxGeometry x="40" y="50" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- GitHub -->
+        <mxCell id="github" value="&#xa;GitHub&#xa;(Repos + Branches)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-ext">
+          <mxGeometry x="260" y="50" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Vercel -->
+        <mxCell id="vercel" value="&#xa;Vercel&#xa;(Auto-deploy on push)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-ext">
+          <mxGeometry x="500" y="50" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Anthropic API -->
+        <mxCell id="anthropic" value="&#xa;Anthropic API&#xa;(Claude)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#be185d;fontColor=#ffffff;strokeColor=#9d174d;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;" vertex="1" parent="lane-ext">
+          <mxGeometry x="740" y="50" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Evaluator Webhook -->
+        <mxCell id="evaluator" value="&#xa;Evaluator&#xa;Webhook" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#475569;fontColor=#ffffff;strokeColor=#334155;fontSize=11;fontStyle=1;arcSize=12;spacingTop=4;dashed=1;dashPattern=8 4;" vertex="1" parent="lane-ext">
+          <mxGeometry x="960" y="50" width="140" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ EDGES ═══════════════ -->
+
+        <!-- Orchestrator → Ideation -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#64748b;strokeWidth=1.5;" edge="1" source="orch" target="ideation" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1-label" value="1. ideate()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Orchestrator → GitHub module -->
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#64748b;strokeWidth=1.5;" edge="1" source="ideation" target="gh-mod" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2-label" value="2. createRepo + createBranch" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e2">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="80" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Orchestrator → Vercel module -->
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#64748b;strokeWidth=1.5;" edge="1" source="gh-mod" target="vc-mod" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3-label" value="3. createDeployment" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="60" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Orchestrator → Spawner -->
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#64748b;strokeWidth=1.5;" edge="1" source="vc-mod" target="spawn" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4-label" value="4. spawn N workers" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e4">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="55" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Server → Observability -->
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7c3aed;strokeWidth=1.5;" edge="1" source="server" target="obs" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5-label" value="broadcast()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#7c3aed;fontFamily=monospace;" vertex="1" connectable="0" parent="e5">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Observability → Client -->
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#a855f7;strokeWidth=2;dashed=1;dashPattern=5 3;" edge="1" source="obs" target="client" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6-label" value="WebSocket&#xa;{type, payload}" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#7c3aed;fontFamily=monospace;" vertex="1" connectable="0" parent="e6">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Orchestrator → Server -->
+        <mxCell id="e-orch-srv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#64748b;strokeWidth=1.5;" edge="1" source="orch" target="server" parent="lane-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-orch-srv-lbl" value="createServer()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e-orch-srv">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ═══════════════ CROSS-LANE EDGES ═══════════════ -->
+
+        <!-- Spawner → Modal Trigger (cross-lane) -->
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#ea580c;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="spawn" target="trigger" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="485" />
+              <mxPoint x="770" y="195" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7-label" value="HTTP POST&#xa;(trigger)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#ea580c;fontFamily=monospace;" vertex="1" connectable="0" parent="e7">
+          <mxGeometry x="-0.3" relative="1" as="geometry">
+            <mxPoint x="-5" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Trigger → Sandbox (inside worker lane) -->
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;strokeColor=#dc2626;strokeWidth=1.5;" edge="1" source="trigger" target="sandbox" parent="lane-worker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8-label" value="run_in_sandbox.spawn()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#dc2626;fontFamily=monospace;" vertex="1" connectable="0" parent="e8">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint x="60" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Callbacks → Server (cross-lane) -->
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#0f766e;strokeWidth=2;dashed=1;dashPattern=8 4;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="callbacks" target="endpoints" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="395" />
+              <mxPoint x="780" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9-label" value="POST /v1.0/log/{start,step,error,done}" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#0f766e;fontFamily=monospace;" vertex="1" connectable="0" parent="e9">
+          <mxGeometry x="-0.2" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Git ops → GitHub (cross-lane) -->
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#1e293b;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" source="git-ops" target="github" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1150" y="560" />
+              <mxPoint x="1150" y="600" />
+              <mxPoint x="425" y="600" />
+              <mxPoint x="425" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10-label" value="git push (per step)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#1e293b;fontFamily=monospace;" vertex="1" connectable="0" parent="e10">
+          <mxGeometry x="0.4" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Ideation → OpenRouter -->
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#be185d;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="ideation" target="openrouter" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="20" y="260" />
+              <mxPoint x="20" y="600" />
+              <mxPoint x="150" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- GitHub module → GitHub -->
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#1e293b;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" source="gh-mod" target="github" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="346" />
+              <mxPoint x="10" y="346" />
+              <mxPoint x="10" y="600" />
+              <mxPoint x="305" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Vercel module → Vercel -->
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#1e293b;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" source="vc-mod" target="vercel" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="395" />
+              <mxPoint x="220" y="590" />
+              <mxPoint x="575" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- GitHub → Vercel (auto-deploy) -->
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#059669;strokeWidth=2;dashed=1;dashPattern=8 4;" edge="1" source="github" target="vercel" parent="lane-ext">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14-label" value="auto-deploy&#xa;on push" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#059669;fontFamily=monospace;" vertex="1" connectable="0" parent="e14">
+          <mxGeometry x="-0.1" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Claude → Anthropic API -->
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#be185d;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="claude" target="anthropic" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="955" y="570" />
+              <mxPoint x="955" y="600" />
+              <mxPoint x="850" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Server done → Evaluator -->
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;strokeColor=#475569;strokeWidth=1.5;dashed=1;dashPattern=8 4;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="server" target="evaluator" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="160" />
+              <mxPoint x="475" y="580" />
+              <mxPoint x="1060" y="580" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16-label" value="ALL_DONE →&#xa;evaluator webhook" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#475569;fontFamily=monospace;" vertex="1" connectable="0" parent="e16">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ═══════════════ FLOW LEGEND ═══════════════ -->
+        <mxCell id="legend" value="Epoch Pipeline Flow&#xa;─────────────────────&#xa;1. Orchestrator starts&#xa;2. Ideation → OpenRouter → N ideas&#xa;3. Create GitHub repo + N branches&#xa;4. Create Vercel deployment per branch&#xa;5. Spawn N Modal workers&#xa;6. Each worker: Claude agent → code → git push (per step)&#xa;7. Each push triggers Vercel auto-rebuild&#xa;8. Worker POSTs progress → Server → WS → UI&#xa;9. All done → Evaluator webhook" style="text;html=1;align=left;verticalAlign=top;fillColor=#f1f5f9;strokeColor=#cbd5e1;rounded=1;arcSize=8;fontSize=10;fontFamily=monospace;spacingLeft=8;spacingTop=6;spacingRight=8;spacingBottom=6;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="850" width="340" height="180" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

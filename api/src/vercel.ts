@@ -58,35 +58,13 @@ export async function createDeployment(options: {
   });
 
   const deploymentId = createResponse.id ?? "";
-  let url = createResponse.url ?? "";
+  let url = createResponse.meta?.branchAlias ?? "";
   let status = (createResponse.status ?? createResponse.readyState ?? "QUEUED") as string;
 
   log.vercel("Deployment created: " + deploymentId + " status=" + status);
 
-  const deadline = Date.now() + POLL_TIMEOUT_MS;
-  while (status === "BUILDING" || status === "INITIALIZING" || status === "QUEUED") {
-    if (Date.now() >= deadline) {
-      log.warn("Vercel deployment poll timeout for " + deploymentId);
-      break;
-    }
-    await sleep(POLL_INTERVAL_MS);
-    const statusResponse = await vercel.deployments.getDeployment({
-      idOrUrl: deploymentId,
-      withGitRepoInfo: "true",
-    });
-    status = (statusResponse.status ?? status) as string;
-    if (statusResponse.url) url = statusResponse.url;
-    log.vercel("Deployment status: " + status);
-  }
-
-  if (status === "READY" && url) {
-    log.vercel("Deployment ready: " + url);
-  } else if (status === "ERROR") {
-    log.warn("Deployment failed (ERROR) for " + deploymentId);
-  }
-
   return {
-    url: url || `https://${deploymentId}.vercel.app`,
+    url: url ? `https://${url}` : `https://${deploymentId}.vercel.app`,
     deploymentId,
     status,
   };

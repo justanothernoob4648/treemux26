@@ -34,7 +34,7 @@ export async function ideate(input: IdeationInput): Promise<IdeationIdea[]> {
 
   const systemPrompt = `You are an ideation engine for any kind of professional or task. Given a task and worker profiles, output exactly one idea per worker as a JSON array. No markdown, no explanation, only valid JSON.
 Each item must have: "idea" (string: concrete idea with a short implementation plan), "risk" (number 0-100), "temperature" (number 0-100).
-Output exactly ${workerCount} items. Keep each idea and plan extensive for a hackathon.`;
+Output exactly ${workerCount} items. Keep each idea and plan extensive for a hackathon. Make sure that the final JSON is valid and do not contain any trailing commas or other formatting issues.`;
 
   const userPrompt = `Task: ${input.taskDescription}
 
