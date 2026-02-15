@@ -109,6 +109,8 @@ export async function runTask(
       vercelToken: process.env.VERCEL_TOKEN,
       gitUserName: process.env.GIT_USER_NAME,
       gitUserEmail: process.env.GIT_USER_EMAIL,
+      claudeOauthToken: process.env.CLAUDE_CODE_OAUTH_TOKEN,
+      model: input.model,
     });
   }
 

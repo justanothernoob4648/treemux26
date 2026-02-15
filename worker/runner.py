@@ -185,7 +185,7 @@ def main():
     print("Starting Claude CLI (prompt: %d chars)" % len(challenge_doc), file=sys.stderr)
 
     try:
-        model_flag = "--model %s " % model if model else ""
+        model_flag = f"--model {model} " if model else ""
         cmd = [
             "bash", "-c",
             "cat %s | claude -p "

@@ -11,6 +11,8 @@ export interface TaskInput {
   workers: number;
   workerDescriptions: string[];
   evaluator?: EvaluatorSpec;
+  /** Claude model to use (e.g. "sonnet", "opus"). Omit for default. */
+  model?: string;
 }
 
 export interface EvaluatorSpec {
@@ -43,6 +45,10 @@ export interface ImplementationJob {
   /** Git committer identity (must match GitHub account owner for Vercel auto-deploy) */
   gitUserName?: string;
   gitUserEmail?: string;
+  /** Claude Code OAuth token for CLI auth in the sandbox */
+  claudeOauthToken?: string;
+  /** Claude model to use (e.g. "sonnet", "opus"). Omit for default. */
+  model?: string;
 }
 
 // ─── Unified WebSocket event types ───────────────────────────────

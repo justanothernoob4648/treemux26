@@ -262,6 +262,8 @@ def run_in_sandbox(
     vercel_token: str | None,
     git_user_name: str | None,
     git_user_email: str | None,
+    claude_oauth_token: str | None,
+    model: str | None,
 ) -> None:
     """Create a Sandbox and run the agent."""
     job_secret = modal.Secret.from_dict({
@@ -274,16 +276,15 @@ def run_in_sandbox(
         "VERCEL_TOKEN": vercel_token or "",
         "GIT_USER_NAME": git_user_name or "",
         "GIT_USER_EMAIL": git_user_email or "",
+        "CLAUDE_CODE_OAUTH_TOKEN": claude_oauth_token or "",
     })
-
-    oauth_secret = modal.Secret.from_name("claude-oauth")
 
     _log("creating Sandbox job_id=%s branch=%s" % (job_id, branch))
 
     sb = modal.Sandbox.create(
         app=app,
         image=_sandbox_image,
-        secrets=[oauth_secret, job_secret],
+        secrets=[job_secret],
         workdir="/workspace",
         timeout=1800,
     )
@@ -309,6 +310,7 @@ def run_in_sandbox(
         ctx = {
             "challenge_doc": idea,
             "worker_profile": worker_profile,
+            "model": model,
         }
         ctx_json = json.dumps(ctx)
 
@@ -397,5 +399,7 @@ async def trigger(request: Request):
         vercel_token=body.get("vercel_token"),
         git_user_name=body.get("git_user_name"),
         git_user_email=body.get("git_user_email"),
+        claude_oauth_token=body.get("claude_oauth_token"),
+        model=body.get("model"),
     )
     return {"ok": True, "message": "implementation spawned"}

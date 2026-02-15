@@ -17,6 +17,7 @@ export const MOCK_INPUT: TaskInput = {
     role: "judge",
     criteria: ["clarity", "sellability", "conciseness"],
   },
+  model: process.env.MODEL,
 };
 
 /** Base URL for implementation callbacks (steps/done). Must be reachable from Modal (e.g. ngrok in dev). */
