@@ -1,5 +1,5 @@
 /**
- * Epoch – Black box orchestrator (terminal-first).
+ * Treemux – Black box orchestrator (terminal-first).
  * Flow: mock input → ideation (OpenRouter) → N × implementation (Modal or mock) → GitHub → Vercel → evaluator webhook.
  */
 
@@ -9,7 +9,7 @@ import type { TaskInput, IdeationIdea, ImplementationJob } from "./types.ts";
 import { ideate } from "./ideation.ts";
 import { createServer } from "./server.ts";
 import { createRepo, createBranch, parseRepoFullName } from "./github.ts";
-import { createDeployment } from "./vercel.ts";
+import { createDeployment, disableDeploymentProtection } from "./vercel.ts";
 import { runMockImplementation, runModalImplementation } from "./implementation-spawn.ts";
 import { log } from "./logger.ts";
 
@@ -22,30 +22,30 @@ function generateId(): string {
 
 async function main() {
   const input: TaskInput = MOCK_INPUT;
-  log.epoch("========== Epoch Black Box ==========");
-  log.epoch("Task: " + input.taskDescription);
-  log.epoch("Workers: " + input.workers);
-  log.epoch("Callback base: " + CALLBACK_BASE_URL);
-  log.epoch("Implementation: " + (USE_MODAL ? "Modal" : "mock"));
+  log.treemux("========== Treemux Black Box ==========");
+  log.treemux("Task: " + input.taskDescription);
+  log.treemux("Workers: " + input.workers);
+  log.treemux("Callback base: " + CALLBACK_BASE_URL);
+  log.treemux("Implementation: " + (USE_MODAL ? "Modal" : "mock"));
 
   const state = {
     totalJobs: input.workers,
     doneCount: 0,
-    results: [] as { url: string; pitch: string }[],
+    results: [] as { url: string; idea: string; pitch: string }[],
     /** Deployment URL per jobId (created when branch is created) */
     deploymentUrls: {} as Record<string, string>,
-    async onAllDone(results: { url: string; pitch: string }[]) {
-      log.epoch("All deployments done: " + results.length);
+    async onAllDone(results: { url: string; idea: string; pitch: string }[]) {
+      log.treemux("All deployments done: " + results.length);
       if (EVALUATOR_WEBHOOK_URL) {
-        log.epoch("Sending evaluator webhook to " + EVALUATOR_WEBHOOK_URL + " with " + JSON.stringify(results));
+        log.treemux("Sending evaluator webhook to " + EVALUATOR_WEBHOOK_URL + " with " + JSON.stringify(results));
         const res = await fetch(EVALUATOR_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(results),
         });
-        log.epoch("Evaluator webhook response " + res.status);
+        log.treemux("Evaluator webhook response " + res.status);
       } else {
-        log.epoch("No EVALUATOR_WEBHOOK_URL set, skipping evaluator webhook");
+        log.treemux("No EVALUATOR_WEBHOOK_URL set, skipping evaluator webhook");
       }
     },
   };
@@ -53,21 +53,21 @@ async function main() {
   const { server, obs } = createServer(state);
   const port = server.port;
 
-  log.epoch("Running ideation (single OpenRouter call)...");
+  log.treemux("Running ideation (single OpenRouter call)...");
   const ideas: IdeationIdea[] = await ideate({
     taskDescription: input.taskDescription,
     workerDescriptions: input.workerDescriptions.slice(0, input.workers),
   });
 
   obs.broadcast({ type: "IDEATION_DONE", payload: { ideas } });
-  log.epoch("Ideation done, spawning " + ideas.length + " implementation(s)");
+  log.treemux("Ideation done, spawning " + ideas.length + " implementation(s)");
 
   const jobs: ImplementationJob[] = [];
-  const repo = await createRepo(`epoch-${generateId()}`);
+  const repo = await createRepo(`treemux-${generateId()}`);
   for (let i = 0; i < ideas.length; i++) {
     const idea = ideas[i]!;
     const jobId = generateId();
-    const branch = `epoch-worker-${jobId}`;
+    const branch = `treemux-worker-${jobId}`;
     let repoUrl: string | undefined;
     let githubToken: string | undefined;
     if (process.env.GITHUB_TOKEN) {
@@ -89,6 +89,10 @@ async function main() {
               state.deploymentUrls[jobId] = url;
               log.vercel("Deployment endpoint for " + jobId + " (branch " + branch + "): " + url);
               obs.broadcast({ type: "JOB_DEPLOYMENT", payload: { jobId, url } });
+              // Make all deployments publicly accessible (no Vercel auth wall)
+              await disableDeploymentProtection(repoName).catch((e) =>
+                log.warn("Could not disable deployment protection: " + String(e))
+              );
             } catch (e) {
               log.warn("Vercel deploy failed for " + jobId + " " + String(e));
             }
@@ -108,6 +112,10 @@ async function main() {
       branch,
       repoUrl,
       githubToken,
+      vercelToken: process.env.VERCEL_TOKEN,
+      gitUserName: process.env.GIT_USER_NAME,
+      gitUserEmail: process.env.GIT_USER_EMAIL,
+      openrouterApiKey: process.env.OPENROUTER_API_KEY,
     });
   }
 
@@ -118,8 +126,6 @@ async function main() {
       runMockImplementation(job, obs).catch((e) => log.error("Mock spawn error " + String(e)));
     }
   }
-
-  log.epoch("All jobs triggered. Listen on ws://localhost:" + port + "/ws for updates.");
 }
 
 main().catch((e) => {

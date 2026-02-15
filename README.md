@@ -1,4 +1,4 @@
-# epoch
+# treemux
 
 To install dependencies:
 

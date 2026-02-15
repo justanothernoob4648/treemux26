@@ -1,5 +1,5 @@
 /**
- * Colored terminal logging for Epoch (chalk).
+ * Colored terminal logging for Treemux (chalk).
  */
 
 import chalk from "chalk";
@@ -7,7 +7,7 @@ import chalk from "chalk";
 const tag = (label: string, color: typeof chalk.cyan) => (msg: string) => color(`[${label}]`) + " " + msg;
 
 export const log = {
-  epoch: (msg: string, ...args: unknown[]) => console.log(tag("epoch", chalk.magenta)(msg), ...args),
+  treemux: (msg: string, ...args: unknown[]) => console.log(tag("treemux", chalk.magenta)(msg), ...args),
   ideation: (msg: string, ...args: unknown[]) => console.log(tag("ideation", chalk.blue)(msg), ...args),
   server: (msg: string, ...args: unknown[]) => console.log(tag("server", chalk.green)(msg), ...args),
   obs: (msg: string, ...args: unknown[]) => console.log(tag("obs", chalk.cyan)(msg), ...args),

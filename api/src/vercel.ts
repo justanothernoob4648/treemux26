@@ -1,6 +1,6 @@
 /**
  * Vercel deployment automation via @vercel/sdk.
- * One branch per worker: ref = branch (e.g. epoch-job-0).
+ * One branch per worker: ref = branch (e.g. treemux-worker-xxx).
  * @see https://docs.vercel.com/docs/rest-api/reference/examples/deployments-automation
  */
 
@@ -68,6 +68,34 @@ export async function createDeployment(options: {
     deploymentId,
     status,
   };
+}
+
+/**
+ * Disable Vercel Deployment Protection on a project so all deployments are publicly accessible.
+ * Must be called after the first deployment creates the project.
+ */
+export async function disableDeploymentProtection(projectName: string): Promise<void> {
+  const token = process.env.VERCEL_TOKEN;
+  if (!token) return;
+
+  log.vercel("Disabling deployment protection for " + projectName + " ...");
+  const res = await fetch(`https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ssoProtection: null,
+      passwordProtection: null,
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    log.warn("Failed to disable deployment protection: " + res.status + " " + text);
+  } else {
+    log.vercel("Deployment protection disabled — all deployments are now public");
+  }
 }
 
 function sleep(ms: number): Promise<void> {

@@ -87,8 +87,9 @@ export async function runMockImplementation(
 
   await postDone({
     jobId,
-    repoUrl: repoUrl ?? "https://github.com/epoch/demo",
-    pitch: "Built with Epoch: " + idea,
+    repoUrl: repoUrl ?? "https://github.com/treemux/demo",
+    idea,
+    pitch: "We built a production-ready app that " + idea + ". Deployed live and ready to demo — working software shipped in minutes.",
     success: true,
     error: null,
     branch: branch ?? "main",
@@ -124,6 +125,10 @@ export async function runModalImplementation(
       branch: job.branch,
       repo_url: job.repoUrl,
       github_token: job.githubToken,
+      vercel_token: job.vercelToken,
+      git_user_name: job.gitUserName,
+      git_user_email: job.gitUserEmail,
+      openrouter_api_key: job.openrouterApiKey,
     }),
   });
 

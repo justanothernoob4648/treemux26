@@ -1,9 +1,9 @@
 /**
- * Epoch orchestrator server: WebSocket + HTTP callbacks for implementation modules.
+ * Treemux orchestrator server: WebSocket + HTTP callbacks for implementation modules.
  * All inbound POST payloads use the unified { type, payload } shape (WsEvent).
  */
 
-import type { JobStartedPayload, JobStepLogPayload, JobDonePayload, JobErrorPayload, JobPushPayload, WsEvent } from "./types.ts";
+import type { JobStartedPayload, JobStepLogPayload, JobDonePayload, JobErrorPayload, JobPushPayload, JobDeploymentPayload, WsEvent } from "./types.ts";
 import { getObservabilityHandlers } from "./observability.ts";
 import { createDeployment } from "./vercel.ts";
 import { parseRepoFullName } from "./github.ts";
@@ -11,12 +11,12 @@ import { log } from "./logger.ts";
 
 const PORT = parseInt(process.env.PORT ?? "3000", 10);
 
-export type OnAllDone = (results: { url: string; pitch: string }[]) => void | Promise<void>;
+export type OnAllDone = (results: { url: string; idea: string; pitch: string }[]) => void | Promise<void>;
 
 export interface ServerState {
   totalJobs: number;
   doneCount: number;
-  results: { url: string; pitch: string }[];
+  results: { url: string; idea: string; pitch: string }[];
   deploymentUrls?: Record<string, string>;
   onAllDone?: OnAllDone;
 }
@@ -92,6 +92,24 @@ export function createServer(state: ServerState) {
     });
   }
 
+  /** POST /v1.0/log/deployment — worker reports a Vercel deployment URL */
+  async function handleDeployment(req: Request): Promise<Response> {
+    if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+    let body: JobDeploymentPayload;
+    try {
+      body = (await req.json()) as JobDeploymentPayload;
+    } catch {
+      log.error("/v1.0/log/deployment invalid JSON");
+      return new Response("Invalid JSON", { status: 400 });
+    }
+    log.server("JOB_DEPLOYMENT " + body.jobId + " url=" + body.url);
+    if (state.deploymentUrls) state.deploymentUrls[body.jobId] = body.url;
+    obs.broadcast({ type: "JOB_DEPLOYMENT", payload: body });
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   /** POST /v1.0/log/done — worker signals completion */
   async function handleDone(req: Request): Promise<Response> {
     if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
@@ -112,7 +130,7 @@ export function createServer(state: ServerState) {
         if (org && repo) {
           const ref = body.branch ?? "main";
           const deploy = await createDeployment({
-            name: `epoch-${body.jobId}`,
+            name: `treemux-${body.jobId}`,
             org,
             repo,
             ref,
@@ -128,7 +146,7 @@ export function createServer(state: ServerState) {
       log.server("Deployment endpoint " + body.jobId + ": " + url);
     }
 
-    state.results.push({ url: url || body.repoUrl, pitch: body.pitch ?? "" });
+    state.results.push({ url: url || body.repoUrl, idea: body.idea ?? "", pitch: body.pitch ?? "" });
     state.doneCount += 1;
     log.server("progress " + state.doneCount + " / " + state.totalJobs);
 
@@ -155,6 +173,7 @@ export function createServer(state: ServerState) {
       if (u.pathname === "/v1.0/log/step") return handleStep(req);
       if (u.pathname === "/v1.0/log/error") return handleError(req);
       if (u.pathname === "/v1.0/log/push") return handlePush(req);
+      if (u.pathname === "/v1.0/log/deployment") return handleDeployment(req);
       if (u.pathname === "/v1.0/log/done") return handleDone(req);
       if (u.pathname === "/health") return new Response("ok");
       return new Response("Not found", { status: 404 });
@@ -166,6 +185,6 @@ export function createServer(state: ServerState) {
     },
   });
 
-  log.server("Listening on " + server.port + " WS /ws, POST /v1.0/log/{start,step,error,push,done}");
+  log.server("Listening on " + server.port + " WS /ws, POST /v1.0/log/{start,step,error,push,deployment,done}");
   return { server, obs };
 }

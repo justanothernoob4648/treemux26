@@ -1,5 +1,5 @@
 /**
- * Mocked input layer for Epoch black box.
+ * Mocked input layer for Treemux black box.
  * In production this would come from API/UI.
  */
 

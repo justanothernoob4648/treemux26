@@ -50,7 +50,7 @@ Respond with a JSON array of exactly ${workerCount} objects: [{ "idea": "...", "
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${key}`,
-      "HTTP-Referer": "https://epoch.local",
+      "HTTP-Referer": "https://treemux.dev",
     },
     body: JSON.stringify({
       model: IDEATION_MODEL,

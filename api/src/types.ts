@@ -1,5 +1,5 @@
 /**
- * Epoch – Black box layer types
+ * Treemux – Black box layer types
  * Idea → Ideation (OpenRouter) → N × Implementation (Modal + Claude) → GitHub → Vercel
  *
  * All WebSocket messages use the unified wrapper: { type: string, payload: ... }
@@ -38,6 +38,13 @@ export interface ImplementationJob {
   branch: string;
   repoUrl?: string;
   githubToken?: string;
+  /** Passed to worker so it can re-trigger Vercel after first push */
+  vercelToken?: string;
+  /** Git committer identity (must match GitHub account owner for Vercel auto-deploy) */
+  gitUserName?: string;
+  gitUserEmail?: string;
+  /** OpenRouter key for AI pitch generation in the worker */
+  openrouterApiKey?: string;
 }
 
 // ─── Unified WebSocket event types ───────────────────────────────
@@ -84,6 +91,9 @@ export interface JobStepLogPayload {
 export interface JobDonePayload {
   jobId: string;
   repoUrl: string;
+  /** The original idea given to the worker */
+  idea: string;
+  /** A compelling elevator pitch for the evaluator */
   pitch: string;
   success: boolean;
   error?: string;
@@ -116,12 +126,13 @@ export interface JobDeploymentPayload {
 
 /** All jobs done → evaluator webhook fired */
 export interface AllDonePayload {
-  results: { url: string; pitch: string }[];
+  results: DeploymentResult[];
 }
 
 /** Final webhook payload when all deployments are ready */
 export interface DeploymentResult {
   url: string;
+  idea: string;
   pitch: string;
 }
 
