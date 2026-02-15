@@ -18,7 +18,7 @@ export interface TaskInput {
 export interface EvaluatorSpec {
   count: number;
   role: string;
-  criteria: string[];
+  criteria: string;
 }
 
 /** One idea per worker from ideation module */
@@ -134,7 +134,8 @@ export interface JobDeploymentPayload {
 
 /** All jobs done → evaluator webhook fired */
 export interface AllDonePayload {
-  results: DeploymentResult[];
+  evaluator: EvaluatorSpec | null;
+  builds: DeploymentResult[];
 }
 
 /** Final webhook payload when all deployments are ready */
@@ -144,15 +145,20 @@ export interface DeploymentResult {
   pitch: string;
 }
 
-export type WebhookPayload = DeploymentResult[];
+export type WebhookPayload = AllDonePayload;
 
 // ─── Server state (shared between controller & server) ──────────
 
-export type OnAllDone = (results: { url: string; idea: string; pitch: string }[]) => void | Promise<void>;
+export type OnAllDone = (payload: AllDonePayload) => void | Promise<void>;
 
 export interface ServerState {
+  /** How many jobs were spawned per repoUrl */
   jobsPerRepoUrl: Map<string, number>;
+  /** How many jobs have completed per repoUrl */
   completedJobs: Map<string, number>;
-  results: { url: string; idea: string; pitch: string }[];
+  /** Evaluator spec stored per repoUrl (set at task creation time) */
+  evaluators: Map<string, EvaluatorSpec>;
+  /** Accumulated results (url + idea + pitch + repoUrl for grouping) */
+  results: { url: string; idea: string; pitch: string; repoUrl: string }[];
   onAllDone?: OnAllDone;
 }

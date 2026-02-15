@@ -51,8 +51,9 @@ export async function runTask(
   const repo = await createRepo(`treemux-${generateId()}`);
   if (state) {
     state.jobsPerRepoUrl.set(repo.cloneUrl, input.workers);
-    state.results = [];
-    state.completedJobs = new Map();
+    if (input.evaluator) {
+      state.evaluators.set(repo.cloneUrl, input.evaluator);
+    }
   }
 
   for (let i = 0; i < ideas.length; i++) {

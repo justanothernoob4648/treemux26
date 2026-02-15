@@ -11,8 +11,8 @@ import type { TaskInput } from "./types.ts";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const apiRoot = resolve(__dirname, "..");
 
-const defaultPrompt = readFileSync(resolve(apiRoot, "prompt.md"), "utf-8").trim();
-const defaultWorkerDesc = readFileSync(resolve(apiRoot, "workers", "johnny.md"), "utf-8").trim();
+const defaultPrompt = readFileSync(resolve(apiRoot, "assets", "tasks", "treehacks.md"), "utf-8").trim();
+const defaultWorkerDesc = readFileSync(resolve(apiRoot, "assets", "personas", "johnny.md"), "utf-8").trim();
 
 export const MOCK_INPUT: TaskInput = {
   taskDescription: defaultPrompt,

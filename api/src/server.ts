@@ -19,15 +19,16 @@ const obs = getObservabilityHandlers(PORT);
 const state: ServerState = {
   jobsPerRepoUrl: new Map(),
   completedJobs: new Map(),
+  evaluators: new Map(),
   results: [],
-  async onAllDone(results) {
-    log.treemux("All deployments done: " + results.length);
+  async onAllDone(payload) {
+    log.treemux("All deployments done: " + payload.builds.length + " builds, evaluator=" + (payload.evaluator ? "yes" : "none"));
     if (EVALUATOR_WEBHOOK_URL) {
       log.treemux("Sending evaluator webhook to " + EVALUATOR_WEBHOOK_URL);
       const res = await fetch(EVALUATOR_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(results),
+        body: JSON.stringify(payload),
       });
       log.treemux("Evaluator webhook response " + res.status);
     } else {
@@ -168,12 +169,15 @@ async function handleDone(req: Request): Promise<Response> {
   const repoJobs = state.jobsPerRepoUrl.get(body.repoUrl) ?? 0;
   log.server("progress " + repoCompletedJobs + " / " + repoJobs);
 
-  if (repoCompletedJobs === repoJobs) {
-    log.server("all implementations done for " + body.repoUrl + ", firing eval3uator webhook");
-    obs.broadcast({ type: "ALL_DONE", payload: { results: state.results } });
-    await state.onAllDone?.(state.results.filter((result) => result.url !== body.repoUrl));
-  } else {
-    log.server("progress " + repoCompletedJobs + " / " + repoJobs);
+  if (repoCompletedJobs >= repoJobs) {
+    log.server("all implementations done for " + body.repoUrl + ", firing evaluator webhook");
+    const evaluator = state.evaluators.get(body.repoUrl) ?? null;
+    const builds = state.results
+      .filter((r) => r.repoUrl === body.repoUrl)
+      .map((r) => ({ url: r.url, idea: r.idea, pitch: r.pitch }));
+    const allDonePayload = { evaluator, builds };
+    obs.broadcast({ type: "ALL_DONE", payload: allDonePayload });
+    await state.onAllDone?.(allDonePayload);
   }
 
   return new Response(JSON.stringify({ ok: true }), {
