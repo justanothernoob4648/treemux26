@@ -50,8 +50,9 @@ export default function PreviewNode({ data }: PreviewNodeProps) {
             src={url}
             title="Site preview"
             className="w-full h-full border-none"
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
             loading="lazy"
+            referrerPolicy="no-referrer"
           />
         </div>
 

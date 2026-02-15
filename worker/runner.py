@@ -62,7 +62,7 @@ treemux-report done
   ```typescript
   const nextConfig = {
     async headers() {
-      return [{ source: '/(.*)', headers: [{ key: 'X-Frame-Options', value: 'ALLOWALL' }] }]
+      return [{ source: '/(.*)', headers: [{ key: 'Content-Security-Policy', value: 'frame-ancestors *' }] }]
     },
     // ... other config
   }
@@ -137,7 +137,8 @@ def main():
                 "!.env.example\n"
             )
 
-    # Write vercel.json — allow iframe embedding by removing restrictive headers
+    # Write vercel.json — allow iframe embedding via CSP frame-ancestors
+    # CSP frame-ancestors overrides X-Frame-Options in all modern browsers
     vercel_json_path = os.path.join("/workspace", "vercel.json")
     if not os.path.exists(vercel_json_path):
         with open(vercel_json_path, "w") as f:
@@ -147,7 +148,6 @@ def main():
                         "source": "/(.*)",
                         "headers": [
                             {"key": "Content-Security-Policy", "value": "frame-ancestors *"},
-                            {"key": "X-Frame-Options", "value": ""},
                         ],
                     }
                 ]

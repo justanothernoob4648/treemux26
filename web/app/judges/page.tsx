@@ -114,7 +114,8 @@ export default function JudgesPage() {
                       src={job.deploymentUrl}
                       title={`Preview for ${job.jobId}`}
                       className="w-full h-[300px] border-0"
-                      sandbox="allow-scripts allow-same-origin"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <p className="text-[9px] font-mono text-text-muted mt-1.5 truncate">{job.deploymentUrl}</p>

@@ -138,7 +138,7 @@ Microlink provides live screenshot thumbnails for the pipeline visualization.
 
 - **DeployNode** (`web/components/pipeline/DeployNode.tsx`): Fetches a screenshot of each Vercel deployment URL via `https://api.microlink.io/?url=<url>&screenshot=true&meta=false&embed=screenshot.url`. The screenshot auto-refreshes every 5 seconds with cache busting to show the latest build state.
 - **PreviewNode** (`web/components/flow/PreviewNode.tsx`): Same screenshot logic for the `/live` simulation page.
-- **Why not iframes**: Vercel deployments set `X-Frame-Options: DENY` by default, which blocks iframe embedding. Microlink sidesteps this by rendering the page server-side and returning a screenshot image.
+- **Iframe embedding**: Deployed projects include `Content-Security-Policy: frame-ancestors *` (via `vercel.json` and `next.config.ts` headers) which overrides Vercel's default `X-Frame-Options` in modern browsers, enabling live iframe previews.
 
 ---
 
