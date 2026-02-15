@@ -1,0 +1,269 @@
+<mxfile host="app.diagrams.net" agent="Treemux" version="26.0.0">
+  <diagram id="treemux-arch" name="System Overview">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════ FOLDER CONTAINERS ═══════════ -->
+
+        <!-- API folder -->
+        <mxCell id="api-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5e1;strokeColor=#038d39;strokeWidth=2;dashed=0;arcSize=8;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="30" width="340" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="api-label" value="&lt;b&gt;api/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Bun + TypeScript&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#038d39;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="555" y="38" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Web folder -->
+        <mxCell id="web-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;strokeWidth=2;dashed=0;arcSize=8;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="30" width="340" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="web-label" value="&lt;b&gt;web/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Next.js + React + @xyflow/react&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#2563eb;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="90" y="38" width="230" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Worker folder -->
+        <mxCell id="worker-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;dashed=0;arcSize=8;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="850" y="30" width="340" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-label" value="&lt;b&gt;worker/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Python + Modal Sandbox&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#d97706;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="940" y="38" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Eval folder -->
+        <mxCell id="eval-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce7f3;strokeColor=#db2777;strokeWidth=2;dashed=0;arcSize=8;verticalAlign=top;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="30" width="310" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-label" value="&lt;b&gt;eval/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;TypeScript + Claude Agent SDK&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#db2777;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="38" width="210" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════ EXTERNAL PROVIDERS (bottom row) ═══════════ -->
+
+        <mxCell id="providers-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;strokeWidth=1;dashed=1;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="560" width="1540" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="prov-label" value="&lt;b&gt;External Providers&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="45" y="565" width="120" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Provider boxes -->
+        <mxCell id="github" value="&lt;b&gt;GitHub&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;REST API&lt;br&gt;Repos + Branches&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#24292e;fontColor=#fff;strokeColor=#24292e;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="600" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vercel" value="&lt;b&gt;Vercel&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;@vercel/sdk&lt;br&gt;Auto-deploy + Env vars&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#000;fontColor=#fff;strokeColor=#000;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="210" y="600" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="modal" value="&lt;b&gt;Modal&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Cloud Sandboxes&lt;br&gt;GPU / CPU isolation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4f46e5;fontColor=#fff;strokeColor=#4f46e5;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="390" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="anthropic" value="&lt;b&gt;Anthropic&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Claude Code CLI&lt;br&gt;Claude Agent SDK&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4a373;fontColor=#000;strokeColor=#d4a373;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="openrouter" value="&lt;b&gt;OpenRouter&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;API Gateway&lt;br&gt;Ideation + Pitches&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7c3aed;fontColor=#fff;strokeColor=#7c3aed;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="730" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="openai" value="&lt;b&gt;OpenAI&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;GPT models&lt;br&gt;Alt AI provider&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#10a37f;fontColor=#fff;strokeColor=#10a37f;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="900" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="browserbase" value="&lt;b&gt;BrowserBase&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Stagehand SDK&lt;br&gt;Browser automation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0ea5e9;fontColor=#fff;strokeColor=#0ea5e9;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="microlink" value="&lt;b&gt;Microlink&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Screenshot API&lt;br&gt;Live previews&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e879f9;fontColor=#000;strokeColor=#e879f9;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="600" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user-browser" value="&lt;b&gt;User Browser&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;End user&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3f4f6;fontColor=#111;strokeColor=#9ca3af;fontSize=11;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════ INTERNAL NODES (inside folders) ═══════════ -->
+
+        <!-- WEB nodes -->
+        <mxCell id="web-landing" value="&lt;b&gt;Landing Page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;LandingPage.tsx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="90" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="web-create" value="&lt;b&gt;Task Creation&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;create/page.tsx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="210" y="90" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="web-pipeline" value="&lt;b&gt;Pipeline Flow&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;@xyflow/react DAG&lt;br&gt;Task → Worker → Profile →&lt;br&gt;Deploy → Pitch → Judge&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#93c5fd;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="155" width="285" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="web-hook" value="&lt;b&gt;useTaskStream&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;WebSocket consumer&lt;br&gt;Event → State machine&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#93c5fd;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="240" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="web-eval-sidebar" value="&lt;b&gt;EvalSidebar&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Rankings + progress&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="215" y="240" width="125" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="web-deploy-node" value="&lt;b&gt;DeployNode&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Screenshot via Microlink&lt;br&gt;Auto-refresh 5s&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="315" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="web-live" value="&lt;b&gt;Live Monitor&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;live/page.tsx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="390" width="110" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="web-judges" value="&lt;b&gt;Judges Screen&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;judges/page.tsx&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfdbfe;strokeColor=#2563eb;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="185" y="390" width="130" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- API nodes -->
+        <mxCell id="api-server" value="&lt;b&gt;HTTP + WS Server&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;server.ts — Bun.serve()&lt;br&gt;POST /v1.0/task&lt;br&gt;POST /v1.0/log/*&lt;br&gt;WS /ws?taskId=&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#86efac;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="90" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="api-task" value="&lt;b&gt;Task Controller&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;task.ts — GitHub repo,&lt;br&gt;branches, Vercel deploy,&lt;br&gt;spawn N workers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#86efac;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="655" y="90" width="110" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="api-obs" value="&lt;b&gt;Observability&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Channel-based WS&lt;br&gt;broadcast per taskId&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="190" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-github" value="&lt;b&gt;github.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Create repos + branches&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="260" width="135" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="api-vercel" value="&lt;b&gt;vercel.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;@vercel/sdk deploy&lt;br&gt;+ env vars + protection&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="630" y="260" width="135" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-spawn" value="&lt;b&gt;implementation-spawn.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Fire-and-forget Modal spawn&lt;br&gt;or mock implementation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="325" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-eval-bridge" value="&lt;b&gt;eval-bridge.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;WS client → eval server&lt;br&gt;Relays progress to frontend&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="395" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="api-ideation" value="&lt;b&gt;ideation.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;OpenRouter LLM call&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbf7d0;strokeColor=#038d39;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="655" y="395" width="110" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Worker nodes -->
+        <mxCell id="worker-main" value="&lt;b&gt;implementation_worker.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Modal @app.function&lt;br&gt;HTTP trigger endpoint&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fde68a;strokeColor=#d97706;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="90" width="170" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-runner" value="&lt;b&gt;runner.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Sandbox entry point&lt;br&gt;Git setup → Claude Code CLI&lt;br&gt;→ Commit → Push loop&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fde68a;strokeColor=#d97706;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="165" width="170" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-report" value="&lt;b&gt;treemux_report.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;CLI for Claude:&lt;br&gt;start / step / done&lt;br&gt;→ HTTP callbacks to API&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fde68a;strokeColor=#d97706;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="250" width="170" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-skills" value="&lt;b&gt;skills/&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;shadcn-ui, ai-sdk,&lt;br&gt;vercel-react-best-practices&lt;br&gt;frontend-design, streamdown&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="335" width="170" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-sandbox" value="&lt;b&gt;Modal Sandbox&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Ubuntu + Node + Bun&lt;br&gt;+ Claude Code CLI&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="875" y="415" width="170" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Eval nodes -->
+        <mxCell id="eval-server" value="&lt;b&gt;eval/server.ts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;WS server on /evaluate&lt;br&gt;Evaluation queue&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbcfe8;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="90" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-planner" value="&lt;b&gt;Planner Agent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Generates judging plan&lt;br&gt;+ scoring categories&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbcfe8;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="165" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-judges" value="&lt;b&gt;Judge Agents&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Text + Browser-based&lt;br&gt;scoring per project&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9a8d4;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="235" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-research" value="&lt;b&gt;Research Agent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Custom persona research&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbcfe8;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1455" y="165" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-scoring" value="&lt;b&gt;Scoring Engine&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Normalize + composite&lt;br&gt;+ outlier detection&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbcfe8;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="305" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-report" value="&lt;b&gt;Report Writer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Rankings summary&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fbcfe8;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="375" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eval-stagehand" value="&lt;b&gt;Stagehand Pool&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;BrowserBase sessions&lt;br&gt;Navigate + evaluate&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9a8d4;strokeColor=#db2777;fontSize=10;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1285" y="430" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════ EDGES ═══════════ -->
+
+        <!-- Web ↔ API: WebSocket -->
+        <mxCell id="e-web-api-ws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#038d39;strokeWidth=2;dashed=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="web-hook" target="api-obs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-web-api-ws-label" value="&lt;font style=&quot;font-size:9px&quot;&gt;WebSocket&lt;br&gt;/ws?taskId=&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#038d39;" vertex="1" connectable="0" parent="e-web-api-ws">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Web → API: POST /v1.0/task -->
+        <mxCell id="e-web-api-http" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563eb;strokeWidth=1.5;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="web-create" target="api-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-web-api-http-label" value="&lt;font style=&quot;font-size:9px&quot;&gt;POST /v1.0/task&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#2563eb;" vertex="1" connectable="0" parent="e-web-api-http">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- API → Worker: HTTP POST (Modal trigger) -->
+        <mxCell id="e-api-worker" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-spawn" target="worker-main">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-api-worker-label" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTP POST&lt;br&gt;Modal trigger&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#d97706;" vertex="1" connectable="0" parent="e-api-worker">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Worker → API: HTTP callbacks -->
+        <mxCell id="e-worker-api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;strokeWidth=1.5;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="worker-report" target="api-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-worker-api-label" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTP callbacks&lt;br&gt;/v1.0/log/*&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#d97706;" vertex="1" connectable="0" parent="e-worker-api">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- API ↔ Eval: WebSocket -->
+        <mxCell id="e-api-eval" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#db2777;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-eval-bridge" target="eval-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-api-eval-label" value="&lt;font style=&quot;font-size:9px&quot;&gt;WebSocket&lt;br&gt;/evaluate&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#db2777;" vertex="1" connectable="0" parent="e-api-eval">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- API → GitHub -->
+        <mxCell id="e-api-github" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#24292e;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-github" target="github">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → Vercel -->
+        <mxCell id="e-api-vercel" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-vercel" target="vercel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API → Modal -->
+        <mxCell id="e-api-modal" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f46e5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-spawn" target="modal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker → GitHub (git push) -->
+        <mxCell id="e-worker-github" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#24292e;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.8;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="worker-sandbox" target="github">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Worker → Anthropic (Claude Code CLI) -->
+        <mxCell id="e-worker-anthropic" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d4a373;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="worker-runner" target="anthropic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API ideation → OpenRouter -->
+        <mxCell id="e-api-openrouter" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#7c3aed;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="api-ideation" target="openrouter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Eval → Anthropic (Claude Agent SDK) -->
+        <mxCell id="e-eval-anthropic" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d4a373;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval-judges" target="anthropic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Eval → BrowserBase (Stagehand) -->
+        <mxCell id="e-eval-browserbase" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0ea5e9;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eval-stagehand" target="browserbase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Web → Microlink -->
+        <mxCell id="e-web-microlink" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#e879f9;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="web-deploy-node" target="microlink">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Web → User Browser -->
+        <mxCell id="e-web-user" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9ca3af;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="web-landing" target="user-browser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
