@@ -3,20 +3,29 @@
  * In production this would come from API/UI.
  */
 
+import { readFileSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 import type { TaskInput } from "./types.ts";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const apiRoot = resolve(__dirname, "..");
+
+const defaultPrompt = readFileSync(resolve(apiRoot, "prompt.md"), "utf-8").trim();
+const defaultWorkerDesc = readFileSync(resolve(apiRoot, "workers", "johnny.md"), "utf-8").trim();
+
 export const MOCK_INPUT: TaskInput = {
-  taskDescription: "You are participating in TreeHacks 2026. You are a CS major and you want to build a very innovative and useful app that will help people in their daily lives.",
+  taskDescription: defaultPrompt,
   workers: 1,
   workerDescriptions: [
-    "I like backend and enjoy building APIs and data models.",
-    // "I prefer frontend and enjoy polished UI and animations.",
+    defaultWorkerDesc,
   ],
   evaluator: {
     count: 1,
     role: "judge",
     criteria: ["clarity", "sellability", "conciseness"],
   },
+  model: process.env.MODEL || "sonnet", // valid model slug for Claude Code
 };
 
 /** Base URL for implementation callbacks (steps/done). Must be reachable from Modal (e.g. ngrok in dev). */

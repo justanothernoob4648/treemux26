@@ -128,6 +128,10 @@ export async function runModalImplementation(
       vercel_token: job.vercelToken,
       git_user_name: job.gitUserName,
       git_user_email: job.gitUserEmail,
+      claude_oauth_token: job.claudeOauthToken,
+      model: job.model,
+      anthropic_api_key: job.anthropicApiKey,
+      openai_api_key: job.openaiApiKey,
       openrouter_api_key: job.openrouterApiKey,
     }),
   });

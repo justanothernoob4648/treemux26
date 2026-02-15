@@ -1,6 +1,6 @@
 /**
  * Treemux – Task controller.
- * Receives TaskInput, orchestrates ideation → GitHub → Vercel → N × implementation spawn.
+ * Receives TaskInput, orchestrates GitHub → Vercel → N × implementation spawn.
  * Returns { success: boolean } immediately; all progress is reported via webhooks / WS.
  */
 
@@ -8,7 +8,6 @@ import { customAlphabet } from "nanoid";
 import { CALLBACK_BASE_URL, EVALUATOR_WEBHOOK_URL } from "./config.ts";
 import type { TaskInput, IdeationIdea, ImplementationJob, ServerState } from "./types.ts";
 import type { ObservabilityHandlers } from "./observability.ts";
-import { ideate } from "./ideation.ts";
 import { createRepo, createBranch, parseRepoFullName } from "./github.ts";
 import { createDeployment, disableDeploymentProtection } from "./vercel.ts";
 import { runMockImplementation, runModalImplementation } from "./implementation-spawn.ts";
@@ -35,21 +34,17 @@ export async function runTask(
   log.treemux("Callback base: " + CALLBACK_BASE_URL);
   log.treemux("Implementation: " + (USE_MODAL ? "Modal" : "mock"));
 
-  // ── Ideation ──────────────────────────────────────────────────
-  log.treemux("Running ideation (single OpenRouter call)...");
-  let ideas: IdeationIdea[];
-  try {
-    ideas = await ideate({
-      taskDescription: input.taskDescription,
-      workerDescriptions: input.workerDescriptions.slice(0, input.workers),
-    });
-  } catch (e) {
-    log.error("Ideation failed: " + String(e));
-    return { success: false };
-  }
+  // ── Synthetic ideation (pass task description directly to workers) ──
+  const ideas: IdeationIdea[] = input.workerDescriptions
+    .slice(0, input.workers)
+    .map(() => ({
+      idea: input.taskDescription,
+      risk: 50,
+      temperature: 50,
+    }));
 
   obs.broadcast({ type: "IDEATION_DONE", payload: { ideas } });
-  log.treemux("Ideation done, spawning " + ideas.length + " implementation(s)");
+  log.treemux("Ideation done (synthetic), spawning " + ideas.length + " implementation(s)");
 
   // ── GitHub repo + branches + Vercel deployments ───────────────
   const jobs: ImplementationJob[] = [];
@@ -113,6 +108,10 @@ export async function runTask(
       vercelToken: process.env.VERCEL_TOKEN,
       gitUserName: process.env.GIT_USER_NAME,
       gitUserEmail: process.env.GIT_USER_EMAIL,
+      claudeOauthToken: process.env.CLAUDE_CODE_OAUTH_TOKEN,
+      model: input.model,
+      anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+      openaiApiKey: process.env.OPENAI_API_KEY,
       openrouterApiKey: process.env.OPENROUTER_API_KEY,
     });
   }
