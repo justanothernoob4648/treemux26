@@ -98,6 +98,35 @@ export async function disableDeploymentProtection(projectName: string): Promise<
   }
 }
 
+/**
+ * Add environment variables to a Vercel project so deployed apps can use API keys at runtime.
+ * Uses upsert so it's safe to call multiple times for the same project.
+ */
+export async function addProjectEnvVars(
+  projectName: string,
+  vars: { key: string; value: string }[],
+): Promise<void> {
+  if (!vars.length) return;
+  const vercel = getClient();
+  log.vercel("Adding " + vars.length + " env var(s) to project " + projectName);
+
+  try {
+    await vercel.projects.createProjectEnv({
+      idOrName: projectName,
+      upsert: "true",
+      requestBody: vars.map((v) => ({
+        key: v.key,
+        value: v.value,
+        target: ["production", "preview", "development"] as any,
+        type: "encrypted" as const,
+      })),
+    });
+    log.vercel("Environment variables set for " + projectName);
+  } catch (e) {
+    log.warn("Failed to add env vars to " + projectName + ": " + String(e));
+  }
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }

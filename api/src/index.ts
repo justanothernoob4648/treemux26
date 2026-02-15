@@ -10,7 +10,7 @@ import type { TaskInput, IdeationIdea, ImplementationJob } from "./types.ts";
 import type { ObservabilityHandlers } from "./observability.ts";
 import { ideate } from "./ideation.ts";
 import { createRepo, createBranch, parseRepoFullName } from "./github.ts";
-import { createDeployment, disableDeploymentProtection } from "./vercel.ts";
+import { createDeployment, disableDeploymentProtection, addProjectEnvVars } from "./vercel.ts";
 import { runMockImplementation, runModalImplementation } from "./implementation-spawn.ts";
 import { log } from "./logger.ts";
 
@@ -83,6 +83,16 @@ export async function runTask(
               await disableDeploymentProtection(repoName).catch((e) =>
                 log.warn("Could not disable deployment protection: " + String(e))
               );
+              // Inject API keys so deployed apps can call AI services at runtime
+              const envVars: { key: string; value: string }[] = [];
+              if (process.env.ANTHROPIC_API_KEY) envVars.push({ key: "ANTHROPIC_API_KEY", value: process.env.ANTHROPIC_API_KEY });
+              if (process.env.OPENAI_API_KEY) envVars.push({ key: "OPENAI_API_KEY", value: process.env.OPENAI_API_KEY });
+              if (process.env.OPENROUTER_API_KEY) envVars.push({ key: "OPENROUTER_API_KEY", value: process.env.OPENROUTER_API_KEY });
+              if (envVars.length) {
+                await addProjectEnvVars(repoName, envVars).catch((e) =>
+                  log.warn("Could not add env vars: " + String(e))
+                );
+              }
             } catch (e) {
               log.warn("Vercel deploy failed for " + jobId + " " + String(e));
             }
