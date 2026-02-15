@@ -2,9 +2,11 @@
 
 **AI-Powered Hackathon Orchestration Platform**
 
-Treemux takes a single problem statement and spawns N parallel AI workers — each running Claude Code CLI inside isolated Modal sandboxes — to ideate, implement, and deploy complete projects autonomously. Every worker gets its own GitHub branch and live Vercel deployment, with real-time progress streamed to a dashboard judges can watch live.
+Treemux takes a single problem statement and spawns N parallel AI workers — each running Claude Code CLI inside isolated Modal sandboxes — to ideate, implement, and deploy complete projects autonomously. Every task set gets its own GitHub repo, and each worker gets its own branch and live Vercel deployment, for quick idea prototyping. with real-time progress streamed to users. Finally, we run our own evaluator model, which is responsabile for evaluating and judging each of the projects based ono on idea and implementation.
 
 > Task → N × AI Workers (Modal + Claude Code) → GitHub → Vercel → Live Demos
+
+This has tremendous potenttial. Imagine a founder simulating a batch of 100 YC companies in 3 hours for  $10 worth of Claude credits and having a deep research judge pick the best *implemented* idea?g
 
 ---
 
