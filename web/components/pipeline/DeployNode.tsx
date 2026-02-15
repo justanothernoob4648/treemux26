@@ -1,38 +1,87 @@
 'use client'
-
+ 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Globe, Image as ImageIcon, RefreshCw } from 'lucide-react'
-
+ 
+const REFRESH_INTERVAL = 30_000 // 30s between refreshes
+ 
 interface DeployNodeProps {
   data: { url: string; index: number }
 }
-
+ 
 export default function DeployNode({ data }: DeployNodeProps) {
   const { url, index } = data
-  const [imgError, setImgError] = useState(false)
-  const [tick, setTick] = useState(0)
-  const imgRef = useRef<HTMLImageElement>(null)
-
-  // Refresh screenshot every 5 seconds
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const abortRef = useRef<AbortController | null>(null)
+  const tickRef = useRef(0)
+ 
+  // Fetch screenshot as blob so we own the bytes — no redirect flicker
+  const fetchScreenshot = useCallback(
+    async (cacheBust: number) => {
+      // Abort any previous in-flight fetch
+      abortRef.current?.abort()
+      const ac = new AbortController()
+      abortRef.current = ac
+ 
+      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&cacheBust=${cacheBust}`
+ 
+      try {
+        setLoading(true)
+        const res = await fetch(apiUrl, { signal: ac.signal })
+        if (!res.ok) throw new Error('fetch failed')
+        const blob = await res.blob()
+        if (ac.signal.aborted) return
+        // Revoke previous blob to avoid memory leak
+        setBlobUrl(prev => {
+          if (prev) URL.revokeObjectURL(prev)
+          return URL.createObjectURL(blob)
+        })
+      } catch {
+        // Aborted or network error — keep the old screenshot
+      } finally {
+        if (!ac.signal.aborted) setLoading(false)
+      }
+    },
+    [url],
+  )
+ 
+  // Initial load + periodic refresh
   useEffect(() => {
+    fetchScreenshot(tickRef.current)
+ 
     const interval = setInterval(() => {
-      setImgError(false)
-      setTick(t => t + 1)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [url])
-
-  // Screenshot thumbnail via microlink with cache-busting
-  const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&cacheBust=${tick}`
-
-  const openUrl = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    window.open(url, '_blank', 'noopener,noreferrer')
-  }, [url])
-
+      tickRef.current += 1
+      fetchScreenshot(tickRef.current)
+    }, REFRESH_INTERVAL)
+ 
+    return () => {
+      clearInterval(interval)
+      abortRef.current?.abort()
+    }
+  }, [fetchScreenshot])
+ 
+  // Cleanup blob URL on unmount
+  useEffect(() => {
+    return () => {
+      setBlobUrl(prev => {
+        if (prev) URL.revokeObjectURL(prev)
+        return null
+      })
+    }
+  }, [])
+ 
+  const openUrl = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+      window.open(url, '_blank', 'noopener,noreferrer')
+    },
+    [url],
+  )
+ 
   return (
     <div className="relative">
       <Handle
@@ -53,14 +102,14 @@ export default function DeployNode({ data }: DeployNodeProps) {
             <span className="text-[9px] font-mono text-primary uppercase tracking-wider">
               Live Preview
             </span>
-            <motion.div
-              key={tick}
-              initial={{ rotate: 0 }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <RefreshCw size={7} className="text-primary/40" />
-            </motion.div>
+            {loading && (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              >
+                <RefreshCw size={7} className="text-primary/40" />
+              </motion.div>
+            )}
           </div>
           <button
             onClick={openUrl}
@@ -69,27 +118,23 @@ export default function DeployNode({ data }: DeployNodeProps) {
             Open <ExternalLink size={8} />
           </button>
         </div>
-
-        {/* Preview — screenshot thumbnail, entire area is clickable */}
+ 
+        {/* Preview */}
         <button
           onClick={openUrl}
           className="nopan nodrag nowheel w-[280px] h-[170px] bg-bg-dark relative overflow-hidden cursor-pointer border-none outline-none block"
         >
-          {!imgError ? (
+          {blobUrl ? (
             <img
-              ref={imgRef}
-              key={`${url}-${tick}`}
-              src={screenshotUrl}
+              src={blobUrl}
               alt="Site preview"
               className="w-full h-full object-cover object-top"
-              onError={() => setImgError(true)}
-              loading="lazy"
             />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <ImageIcon size={20} className="text-text-muted/30" />
               <span className="text-[9px] font-mono text-text-muted/50">
-                Click to open preview
+                {loading ? 'Loading preview…' : 'Click to open preview'}
               </span>
             </div>
           )}
@@ -101,7 +146,7 @@ export default function DeployNode({ data }: DeployNodeProps) {
           </div>
           <div className="absolute inset-0 pointer-events-none border border-primary/10" />
         </button>
-
+ 
         {/* URL */}
         <div className="px-3 py-1.5 border-t border-border-green/20">
           <p className="text-[7px] font-mono text-text-muted truncate">{url}</p>
@@ -115,3 +160,4 @@ export default function DeployNode({ data }: DeployNodeProps) {
     </div>
   )
 }
+ 
