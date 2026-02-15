@@ -169,6 +169,38 @@ const result = await generateText({
 });
 ```
 
+## Server-side: `useChat` messages use `parts`, not `content`
+
+Messages sent by `useChat` (via any transport) use the `parts` format. They may NOT include a top-level `content` field. If you pass these directly to `streamText`, you'll get `AI_InvalidPromptError: The messages do not match the ModelMessage[] schema`.
+
+You must extract text content from `parts` before passing to `streamText`:
+
+```typescript
+// ❌ Incorrect — raw useChat messages may lack `content`
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const result = streamText({ model, messages }); // Error: invalid prompt
+}
+
+// ✅ Correct — convert parts to content
+export async function POST(req: Request) {
+  const { messages: rawMessages } = await req.json();
+  const messages = rawMessages.map((msg: any) => ({
+    role: msg.role,
+    content:
+      msg.content ??
+      msg.parts
+        ?.filter((p: any) => p.type === "text")
+        .map((p: any) => p.text)
+        .join("") ??
+      "",
+  }));
+  const result = streamText({ model, messages });
+}
+```
+
+This applies to all transport types (`TextStreamChatTransport`, `DefaultChatTransport`, etc.).
+
 ## `toDataStreamResponse` → `toUIMessageStreamResponse`
 
 When using `useChat` on the frontend, use `toUIMessageStreamResponse()` instead of `toDataStreamResponse()`. The UI message stream format is designed to work with the chat UI components and handles message state correctly.

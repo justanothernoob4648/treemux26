@@ -59,11 +59,32 @@ import { Streamdown } from 'streamdown';
 ```tsx
 'use client';
 import { useChat } from '@ai-sdk/react';
+import { TextStreamChatTransport } from 'ai';
 import { Streamdown } from 'streamdown';
 import { code } from '@streamdown/code';
+import { useState, useMemo } from 'react';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  const [input, setInput] = useState('');
+  const transport = useMemo(
+    () => new TextStreamChatTransport({ api: '/api/chat' }),
+    []
+  );
+  const { messages, sendMessage, status } = useChat({ transport });
+  const isLoading = status === 'streaming' || status === 'submitted';
+
+  const getTextContent = (msg: (typeof messages)[number]) =>
+    msg.parts
+      .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+      .map((p) => p.text)
+      .join('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    sendMessage({ text: input });
+    setInput('');
+  };
 
   return (
     <>
@@ -74,14 +95,34 @@ export default function Chat() {
           caret="block"
           isAnimating={isLoading && i === messages.length - 1 && msg.role === 'assistant'}
         >
-          {msg.content}
+          {getTextContent(msg)}
         </Streamdown>
       ))}
       <form onSubmit={handleSubmit}>
-        <input value={input} onChange={handleInputChange} disabled={isLoading} />
+        <input value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading} />
+        <button type="submit">Send</button>
       </form>
     </>
   );
+}
+```
+
+**Server route** (`app/api/chat/route.ts`): Messages from `useChat` use `parts` (not `content`). Extract text before passing to `streamText`:
+
+```ts
+import { streamText } from 'ai';
+
+export async function POST(req: Request) {
+  const { messages: rawMessages } = await req.json();
+
+  // useChat sends messages with `parts`, but streamText expects `content`
+  const messages = rawMessages.map((msg: any) => ({
+    role: msg.role,
+    content: msg.content ?? msg.parts?.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') ?? '',
+  }));
+
+  const result = streamText({ model: yourModel, messages });
+  return result.toTextStreamResponse();
 }
 ```
 

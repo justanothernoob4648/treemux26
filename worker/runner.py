@@ -40,8 +40,9 @@ treemux-report done
 
 ### Important Rules
 - Call `treemux-report start` EARLY, right after you decide what to build and have a plan.
-- Call `treemux-report step` — commit early and often. Each call commits & pushes your code.
-  - Your FIRST `treemux-report step` should be right after scaffolding/boilerplate is set up.
+- Call `treemux-report step`. Each call commits & pushes your code.
+  - Your FIRST `treemux-report step` should be right some initial boilerplate setup.
+  - Try to keep your number of steps in 2~4 range.
 - Write a compelling pitch to `/workspace/PITCH.md` BEFORE calling `treemux-report done`.
 - The pitch should be 3-5 sentences: what problem it solves, what makes it unique, why it's impressive.
 - Always call `treemux-report done` when you're finished.
